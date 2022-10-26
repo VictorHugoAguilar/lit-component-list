@@ -1,4 +1,8 @@
 import { LitElement, html, css } from "lit-element";
+import { DisabledMixin } from "./mixin/DisabledMixin";
+import { ChoiceInputMixin } from "./mixin/ChoiceInputMixin";
+import { FormRegisteringMixin } from "./mixin/FormRegisteringMixin";
+import { SlotMixin } from "./mixin/SlotMixin";
 
 /**
  * `VhaaOption` Description
@@ -8,29 +12,15 @@ import { LitElement, html, css } from "lit-element";
  * @demo
  *
  */
-export class VhaaOption extends LitElement {
+export class VhaaOption extends DisabledMixin(ChoiceInputMixin(FormRegisteringMixin(SlotMixin(LitElement)))) {
+    /** @type {any} */
     static get properties() {
         return {
-            active: { type: Boolean, reflect: true },
-            checked: { type: Boolean, reflect: true },
-            disabled: { type: Boolean, reflect: true },
+            active: {
+                type: Boolean,
+                reflect: true,
+            },
         };
-    }
-
-    /**
-     * Instance of the element is created/upgraded. Use: initializing state,
-     * set up event listeners, create shadow dom.
-     * @constructor
-     */
-    constructor() {
-        super();
-        this.active = false;
-        this.checked = false;
-        this.disabled = false;
-        /** @private */
-        this.__onClick = this.__onClick.bind(this);
-        /** @private */
-        this.__registerEventListeners();
     }
 
     static get styles() {
@@ -66,9 +56,51 @@ export class VhaaOption extends LitElement {
     }
 
     /**
-     * Implement to describe the element's DOM using lit-html.
-     * Use the element current props to return a lit-html template result
-     * to render into the element.
+     * @override We want to start with a clean slate, so we omit slots inherited from FormControl
+     */
+    // eslint-disable-next-line class-methods-use-this
+    get slots() {
+        return {};
+    }
+
+    constructor() {
+        super();
+        this.active = false;
+        /** @private */
+        this.__onClick = this.__onClick.bind(this);
+        /** @private */
+        this.__registerEventListeners();
+    }
+
+    /**
+     * @param {string} name
+     * @param {unknown} oldValue
+     */
+    requestUpdate(name, oldValue) {
+        super.requestUpdate(name, oldValue);
+
+        if (name === "active" && this.active !== oldValue) {
+            this.dispatchEvent(new Event("active-changed", { bubbles: true }));
+        }
+    }
+
+    /**
+     * @param {import('@lion/core').PropertyValues } changedProperties
+     */
+    updated(changedProperties) {
+        super.updated(changedProperties);
+        if (changedProperties.has("checked")) {
+            this.setAttribute("aria-selected", `${this.checked}`);
+        }
+
+        if (changedProperties.has("disabled")) {
+            this.setAttribute("aria-disabled", `${this.disabled}`);
+        }
+    }
+
+    /**
+     *
+     * @returns {TemplateResult}
      */
     render() {
         return html`
@@ -81,11 +113,6 @@ export class VhaaOption extends LitElement {
     connectedCallback() {
         super.connectedCallback();
         this.setAttribute("role", "option");
-    }
-
-    disconnectedCallback() {
-        super.disconnectedCallback();
-        this.__unRegisterEventListeners();
     }
 
     /** @private */
@@ -103,18 +130,15 @@ export class VhaaOption extends LitElement {
         if (this.disabled) {
             return;
         }
-        // TODO: implementar por grupo
-        // const parentForm = /** @type {unknown} */ (this._parentFormGroup);
-        // this._isHandlingUserInput = true;
-        // if (parentForm && /** @type {ChoiceGroupHost} */ (parentForm).multipleChoice) {
-        //     this.checked = !this.checked;
-        //     this.active = !this.active;
-        // } else {
-        //     this.checked = true;
-        //     this.active = true;
-        // }
-        // this._isHandlingUserInput = false;
-        this.checked = !this.checked;
-        this.active = !this.active;
+        const parentForm = /** @type {unknown} */ (this._parentFormGroup);
+        this._isHandlingUserInput = true;
+        if (parentForm && /** @type {ChoiceGroupHost} */ (parentForm).multipleChoice) {
+            this.checked = !this.checked;
+            this.active = !this.active;
+        } else {
+            this.checked = true;
+            this.active = true;
+        }
+        this._isHandlingUserInput = false;
     }
 }

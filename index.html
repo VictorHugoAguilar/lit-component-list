@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes" />
+
+        <title>VHAA Component Button Demo</title>
+
+        <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+
+        <script type="module" src="index.js"></script>
+
+        <style>
+            body {
+                font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva,
+                    Verdana, sans-serif;
+            }
+            .with-border {
+                --vhaa-button-padding: 20px;
+                --vhaa-button-border-width: 2px;
+                --vhaa-button-border-color: #000;
+            }
+        </style>
+    </head>
+    <body>
+        <h3>Option</h3>
+        <vhaa-option> Seminuevo</vhaa-option>
+        <vhaa-option> Nuevo</vhaa-option>
+        <vhaa-option> muy nuevo</vhaa-option>
+
+        <hr />
+
+        <h3>ListBox</h3>
+        <vhaa-listbox name="combo" label="Orientation horizontal" orientation="vertical">
+            <vhaa-option>Apple</vhaa-option>
+            <vhaa-option>Nuevo</vhaa-option>
+            <vhaa-option .choiceValue="apple">Apple</vhaa-option>
+
+            <vhaa-option>muy nuevo</vhaa-option>
+        </vhaa-listbox>
+
+        <!-- <h4>ListBox Orientation horizontal</h4>
+        <vhaa-listbox name="combo" label="Orientation horizontal" orientation="horizontal">
+            <vhaa-option .choiceValue="${'Apple'}">Apple</vhaa-option>
+            <vhaa-option .choiceValue="${'Artichoke'}">Artichoke</vhaa-option>
+            <vhaa-option .choiceValue="${'Asparagus'}">Asparagus</vhaa-option>
+            <vhaa-option .choiceValue="${'Banana'}">Banana</vhaa-option>
+            <vhaa-option .choiceValue="${'Beets'}">Beets</vhaa-option>
+            <vhaa-option .choiceValue="${'Bell pepper'}">Bell pepper</vhaa-option>
+            <vhaa-option .choiceValue="${'Broccoli'}">Broccoli</vhaa-option>
+            <vhaa-option .choiceValue="${'Brussels sprout'}">Brussels sprout</vhaa-option>
+            <vhaa-option .choiceValue="${'Cabbage'}">Cabbage</vhaa-option>
+            <vhaa-option .choiceValue="${'Carrot'}">Carrot</vhaa-option>
+        </vhaa-listbox> -->
+    </body>
+</html>
